@@ -2,6 +2,7 @@
 #include "tools.h"
 #include "Eigen/Dense"
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 using Eigen::MatrixXd;
@@ -37,7 +38,7 @@ FusionEKF::FusionEKF() {
     * Set the process and measurement noises
   */
   /** 1. Initialize variables and matrices (x,F,H_laser, H_jacobian, P etc.)
-   *  2. initialize the Kalmarn filter position vector with the first sensor measurements.
+   *  2. initialize the Kalman filter position vector with the first sensor measurements.
    *  3. modify the F and Q matrices prior to the prediction step based on the elapsed time between measurements.
    *  4. call the ipdate step for either the lidar or radar sensor measurement. 
    *     Because the update step for lidar and radar ae slightly different 
@@ -69,23 +70,36 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
     ekf_.x_ << 1, 1, 1, 1;
+    float px;
+    float py;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
       */
+      // get the measurement data
+      float rho = measurement_pack.raw_measurements_[0];
+      float phi = measurement_pack.raw_measurements_[1];
+      
+      px = rho * cos(phi);
+      py = rho * sin(phi);
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       
-      // set the state with the initial location and zero velocity
-      ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
+      px = measurement_pack.raw_measurements_[0];
+      py = measurement_pack.raw_measurements_[1];
       
-      // save the initial timestamp to calculate dt for the next step.
-      previous_timestamp_ = measurement_pack.timestamp_;
     }
-
+    
+    // set the state with the initial location and zero velocity
+    ekf_.x_ << px, py, 0, 0;
+    
+    // save the initial timestamp to calculate dt for the next step.
+    previous_timestamp_ = measurement_pack.timestamp_;
+    
     // done initializing, no need to predict or update
     is_initialized_ = true;
+    
     return;
   }
 
