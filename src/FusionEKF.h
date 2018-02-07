@@ -39,8 +39,8 @@ private:
   long long previous_timestamp_;
   
   // acceleration noise components
-  float noise_ax;
-  float noise_ay;
+  const double noise_ax = 9.0;
+  const double noise_ay = 9.0;
 
   // tool object used to compute Jacobian and RMSE
   Tools tools;
@@ -48,6 +48,9 @@ private:
   Eigen::MatrixXd R_radar_;
   Eigen::MatrixXd H_laser_;
   Eigen::MatrixXd Hj_;
+  Eigen::MatrixXd F_;
+  Eigen::MatrixXd P_;
+  Eigen::MatrixXd Q_;
 };
 
 #endif /* FusionEKF_H_ */
