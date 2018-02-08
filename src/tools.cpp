@@ -15,6 +15,8 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   VectorXd rmse(4);
   rmse << 0,0,0,0;
   
+ 
+  
   // check the validity of the following inputs:
   // * the estimation vector size should not be zero
   // * the estimation vector size should equal ground truth vector size
@@ -24,6 +26,11 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
     cout << "CalculateRMSE() - Error - Invalid estimation or ground truth data!" << endl;
     return rmse;
   }
+  
+   cout << "px_est = " << estimations(0) << "\t" << "px_gt = " << ground_truth(0) << endl;
+   cout << "py_est = " << estimations(1) << "\t" << "py_gt = " << ground_truth(1) << endl;
+   cout << "vx_est = " << estimations(2) << "\t" << "vx_gt = " << ground_truth(2) << endl;
+   cout << "vy_est = " << estimations(3) << "\t" << "vy_gt = " << ground_truth(3) << endl;
   
   // accumulate squared residuals
   for(unsigned int i = 0; i < estimations.size(); i++){

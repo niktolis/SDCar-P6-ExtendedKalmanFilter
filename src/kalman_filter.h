@@ -57,14 +57,29 @@ public:
    * Updates the state by using standard Kalman Filter equations
    * @param z The measurement at k+1
    */
-  void Update(const Eigen::VectorXd &z);
+  void UpdateKF(const Eigen::VectorXd &z);
 
   /**
    * Updates the state by using Extended Kalman Filter equations
    * @param z The measurement at k+1
    */
   void UpdateEKF(const Eigen::VectorXd &z);
-
+  
+private:
+  
+  /**
+   * Updates the state for KF and EKF given the vector y
+   * @param y The result of the z_measured - z_predicted
+   */
+   void Update(const Eigen::VectorXd &y);
+   
+   /**
+    * Normalizes the given angle in [-π, π)
+    * @param phi The angle to be normalized in radians
+    * @return the normalized angle in radians
+    */
+   double NormalizeAngle(double phi);
+  
 };
 
 #endif /* KALMAN_FILTER_H_ */

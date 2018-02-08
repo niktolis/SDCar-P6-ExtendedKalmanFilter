@@ -31,13 +31,45 @@ void KalmanFilter::Predict() {
   P_ = F_ * P_ * Ft + Q_;
 }
 
-void KalmanFilter::Update(const VectorXd &z) {
+void KalmanFilter::UpdateKF(const VectorXd &z) {
   /**
   TODO:
     * update the state by using Kalman Filter equations
   */
   VectorXd z_pred = H_ * x_;
   VectorXd y = z - z_pred;
+  
+  // call common update part
+  Update(y);
+}
+
+void KalmanFilter::UpdateEKF(const VectorXd &z) {
+  
+  VectorXd z_pred = VectorXd(3);
+  double px, py, vx, vy, rho, phi, rho_dot;
+  
+  px = x_(0);
+  py = x_(1);
+  vx = x_(2);
+  vy = x_(3);
+  
+  rho = sqrt(px * px + py * py);
+  phi = atan2(py, px);
+  rho_dot = (px * vx + py * vy) / rho;
+  
+  z_pred << rho, phi, rho_dot;
+  VectorXd y = z - z_pred;
+  
+  // Normalize the phi between [-π, π)
+  y(1) = NormalizeAngle(y(1));
+  
+  // call common update part
+  Update(y);
+}
+
+void KalmanFilter::Update(const VectorXd &y) {
+  
+  
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd K = P_ * Ht * S.inverse();
@@ -49,12 +81,6 @@ void KalmanFilter::Update(const VectorXd &z) {
   P_ = (I - K * H_) * P_;
 }
 
-void KalmanFilter::UpdateEKF(const VectorXd &z) {
-  
-  VectorXd z_pred = VectorXd(3);
-  
-  
-}
 
 double KalmanFilter::NormalizeAngle(double phi){
     phi = fmod(phi + M_PI, 2 * M_PI);

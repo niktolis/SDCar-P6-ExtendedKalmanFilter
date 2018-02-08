@@ -48,8 +48,8 @@ FusionEKF::FusionEKF() {
         
   P_ << 1, 0, 0, 0,
         0, 1, 0, 0,
-        0, 0, 1000, 0,
-        0, 0, 0, 1000;
+        0, 0, 10, 0,
+        0, 0, 0, 10;
               
               
 
@@ -189,7 +189,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     // Update the covariance matrix
     ekf_.R_ = R_laser_;
     // Laser updates
-    ekf_.Update(measurement_pack.raw_measurements_);
+    ekf_.UpdateKF(measurement_pack.raw_measurements_);
   }
 
   // print the output
