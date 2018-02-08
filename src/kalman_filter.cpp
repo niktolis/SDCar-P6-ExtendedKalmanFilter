@@ -1,4 +1,5 @@
 #include "kalman_filter.h"
+#include <math.h>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -50,6 +51,14 @@ void KalmanFilter::Update(const VectorXd &z) {
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
   
+  VectorXd z_pred = VectorXd(3);
   
   
+}
+
+double KalmanFilter::NormalizeAngle(double phi){
+    phi = fmod(phi + M_PI, 2 * M_PI);
+    if (phi < 0)
+        phi += 2 * M_PI;
+    return phi - M_PI;
 }

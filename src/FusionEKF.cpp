@@ -110,11 +110,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       vx = rho_dot * cos(phi);
       vy = rho_dot * sin(phi);
       
-      // set the state with the initial location and zero velocity
-      x_ << px, py, vx, vy;
-      
-      
-      
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       
@@ -152,12 +147,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      * Update the process noise covariance matrix.
      * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
    */
-   float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
+   double dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
    previous_timestamp_ = measurement_pack.timestamp_;
    
-   float dt_2 = dt * dt;
-   float dt_3 = dt_2 * dt;
-   float dt_4 = dt_3 * dt;
+   double dt_2 = dt * dt;
+   double dt_3 = dt_2 * dt;
+   double dt_4 = dt_3 * dt;
    
    // Update the F Matrix with the new delta time
    ekf_.F_(0, 2) = dt;
@@ -168,9 +163,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
               dt_3/2*noise_ax, 0, dt_2*noise_ax, 0,
               0, dt_3/2*noise_ay, 0, dt_2*noise_ay;
    
-  cout << "Before predict!" << endl;
   ekf_.Predict();
-  cout << "I Passed Predict" << endl;
 
   /*****************************************************************************
    *  Update
