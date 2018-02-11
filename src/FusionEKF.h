@@ -39,8 +39,8 @@ private:
   long long previous_timestamp_;
   
   // acceleration noise components
-  const double noise_ax = 9.0;
-  const double noise_ay = 9.0;
+  const double noise_ax_ = 9.0;
+  const double noise_ay_ = 9.0;
 
   // tool object used to compute Jacobian and RMSE
   Tools tools;

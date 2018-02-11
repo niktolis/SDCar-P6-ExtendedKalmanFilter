@@ -1,5 +1,6 @@
 #include "kalman_filter.h"
 #include <math.h>
+#include <iostream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -56,7 +57,15 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   
   rho = sqrt(px * px + py * py);
   phi = atan2(py, px);
-  rho_dot = (px * vx + py * vy) / rho;
+  // check for division by zero
+  if (fabs(rho) < 0.0001) {
+	  std::cout << "UpdateEKF() - Error - Division by Zero!" << std::endl;
+	  rho_dot = 0;
+  }
+  else
+  {
+	  rho_dot = (px * vx + py * vy) / rho;
+  }
   
   z_pred << rho, phi, rho_dot;
   VectorXd y = z - z_pred;
@@ -77,7 +86,7 @@ void KalmanFilter::Update(const VectorXd &y) {
   
   // new estimate
   x_ = x_ + (K * y);
-  long x_size = x_.size();
+  int x_size = static_cast<int>(x_.size());
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 }

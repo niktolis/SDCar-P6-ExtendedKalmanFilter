@@ -29,6 +29,9 @@ public:
   */
   MatrixXd CalculateJacobian(const VectorXd& x_state);
 
+private:
+	VectorXd product_sum_;
+
 };
 
 #endif /* TOOLS_H_ */

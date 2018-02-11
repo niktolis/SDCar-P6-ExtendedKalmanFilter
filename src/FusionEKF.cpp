@@ -51,23 +51,6 @@ FusionEKF::FusionEKF() {
         0, 0, 10, 0,
         0, 0, 0, 10;
               
-              
-
-  /**
-  TODO:
-    * Finish initializing the FusionEKF.
-    * Set the process and measurement noises
-  */
-  
-  /** 1. Initialize variables and matrices (x,F,H_laser, H_jacobian, P etc.)
-   *  2. initialize the Kalman filter position vector with the first sensor measurements.
-   *  3. modify the F and Q matrices prior to the prediction step based on the elapsed time between measurements.
-   *  4. call the ipdate step for either the lidar or radar sensor measurement. 
-   *     Because the update step for lidar and radar ae slightly different 
-   *     there are different functions for updating lidar and radar.
-  **/
-
-
 }
 
 /**
@@ -117,7 +100,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       py = measurement_pack.raw_measurements_[1];
       vx = 0;
       vy = 0;
-      
     }
     
     // set the state with the initial location and zero velocity
@@ -158,22 +140,16 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    ekf_.F_(0, 2) = dt;
    ekf_.F_(1, 3) = dt;
    
-   ekf_.Q_ << dt_4/4*noise_ax, 0, dt_3/2*noise_ax, 0,
-              0, dt_4/4*noise_ay, 0, dt_3/2*noise_ay,
-              dt_3/2*noise_ax, 0, dt_2*noise_ax, 0,
-              0, dt_3/2*noise_ay, 0, dt_2*noise_ay;
+   ekf_.Q_ << (dt_4*noise_ax_)/4, 0, (dt_3*noise_ax_)/2, 0,
+              0, (dt_4*noise_ay_)/4, 0, (dt_3*noise_ay_)/2,
+              (dt_3*noise_ax_)/2, 0, dt_2*noise_ax_, 0,
+              0, (dt_3*noise_ay_)/2, 0, dt_2*noise_ay_;
    
   ekf_.Predict();
 
   /*****************************************************************************
    *  Update
    ****************************************************************************/
-
-  /**
-   TODO:
-     * Use the sensor type to perform the update step.
-     * Update the state and covariance matrices.
-   */
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     
