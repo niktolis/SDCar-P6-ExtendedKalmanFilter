@@ -12,28 +12,35 @@ KalmanFilter::KalmanFilter() {}
 
 KalmanFilter::~KalmanFilter() {}
 
-void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
-                        MatrixXd &H_in, MatrixXd &R_in, MatrixXd &Q_in) {
+void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in) {
   x_ = x_in;
   P_ = P_in;
-  F_ = F_in;
-  H_ = H_in;
-  R_ = R_in;
-  Q_ = Q_in;
 }
 
-void KalmanFilter::Predict() {
-  /**
-  TODO:
-    * predict the state
-  */
-  x_ = F_ * x_;
-  // test
-  MatrixXd Ft = F_.transpose();
-  P_ = F_ * P_ * Ft + Q_;
+MatrixXd KalmanFilter::GetStateCovMat()
+{
+  return P_;
 }
 
-void KalmanFilter::UpdateKF(const VectorXd &z) {
+
+void KalmanFilter::SetStateVec(VectorXd &x_in) {
+  x_ = x_in;
+}
+
+VectorXd KalmanFilter::GetStateVec() {
+  return x_;
+}
+
+void KalmanFilter::Predict(MatrixXd &F_in, MatrixXd &Q_in) {
+
+
+  x_ = F_in * x_;
+
+  MatrixXd Ft = F_in.transpose();
+  P_ = F_in * P_ * Ft + Q_in;
+}
+
+void KalmanFilter::UpdateKF(const VectorXd &z, const MatrixXd &H_, const MatrixXd &R_) {
   /**
   TODO:
     * update the state by using Kalman Filter equations
@@ -42,10 +49,10 @@ void KalmanFilter::UpdateKF(const VectorXd &z) {
   VectorXd y = z - z_pred;
   
   // call common update part
-  Update(y);
+  Update(y, H_, R_);
 }
 
-void KalmanFilter::UpdateEKF(const VectorXd &z) {
+void KalmanFilter::UpdateEKF(const VectorXd &z, const MatrixXd &H_, const MatrixXd &R_) {
   
   VectorXd z_pred = VectorXd(3);
   double px, py, vx, vy, rho, phi, rho_dot;
@@ -74,10 +81,10 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   y(1) = NormalizeAngle(y(1));
   
   // call common update part
-  Update(y);
+  Update(y, H_, R_);
 }
 
-void KalmanFilter::Update(const VectorXd &y) {
+void KalmanFilter::Update(const VectorXd &y, const MatrixXd &H_, const MatrixXd &R_) {
   
   
   MatrixXd Ht = H_.transpose();
