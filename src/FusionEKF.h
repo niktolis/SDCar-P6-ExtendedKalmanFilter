@@ -23,6 +23,7 @@ public:
 
   /**
   * Run the whole flow of the Kalman Filter from here.
+  * @param measurement_pack The package with the retrieved measurements.
   */
   void ProcessMeasurement(const MeasurementPackage &measurement_pack);
 
@@ -38,7 +39,7 @@ private:
 
   // previous timestamp
   long long previous_timestamp_;
-  
+
   // acceleration noise components
   // Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
   const double noise_ax_ = 9.0;
