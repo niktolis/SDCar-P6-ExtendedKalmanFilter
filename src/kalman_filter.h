@@ -11,6 +11,15 @@ private:
   // state covariance matrix
   Eigen::MatrixXd P_;
 
+  // state transition matrix
+  Eigen::MatrixXd F_;
+
+  // process covariance matrix
+  Eigen::MatrixXd Q_;
+
+  // measurement matrix
+  Eigen::MatrixXd H_;
+
 public:
   /**
    * Constructor
@@ -25,9 +34,14 @@ public:
   /**
    * Init Initializes Kalman filter
    * @param x_in Initial state
-   * @param P_in Initial state covariance
+   * @param P_in Initial state covariance matrix
+   * @param F_in Initial state transition matrix
+   * @param Q_in Initial process covariance matrix
+   * @param H_in Initial measurement matrix
    */
-  void Init(Eigen::VectorXd &x_in, Eigen::MatrixXd &P_in);
+  void Init(Eigen::VectorXd &x_in, Eigen::MatrixXd &P_in, 
+            Eigen::MatrixXd &F_in, Eigen::MatrixXd &Q_in, 
+            Eigen::MatrixXd &H_in);
 
   /**
    * Getter function for the state covariance
@@ -51,29 +65,38 @@ public:
   /**
    * Prediction Predicts the state and the state covariance
    * using the process model
-   * @param delta_T Time between k and k+1 in s
+   * @param dt Time between k and k+1 in s
+   * @param noise_ax acceleration noise component in x axis
+   * @param noise_ay accelaration noise component in y axis
    */
-  void Predict(Eigen::MatrixXd &F_in, Eigen::MatrixXd &Q_in);
+  void Predict(const double dt, const double noise_ax, const double noise_ay);
 
   /**
    * Updates the state by using standard Kalman Filter equations
    * @param z The measurement at k+1
+   * @param R_in The measurement covariance matrix
    */
-  void UpdateKF(const Eigen::VectorXd &z, const Eigen::MatrixXd &H_, const Eigen::MatrixXd &R_);
+  void Update(const Eigen::VectorXd &z, const Eigen::MatrixXd &R_in);
 
   /**
    * Updates the state by using Extended Kalman Filter equations
    * @param z The measurement at k+1
+   * @param R_in The measurement covariance matrix
+   * @param Hj_in The Jacobian measurement matrix
    */
-  void UpdateEKF(const Eigen::VectorXd &z, const Eigen::MatrixXd &H_, const Eigen::MatrixXd &R_);
+  void Update(const Eigen::VectorXd &z, const Eigen::MatrixXd &R_in,
+                 const Eigen::MatrixXd &Hj_in);
 
 private:
 
   /**
-   * Updates the state for KF and EKF given the vector y
+   * The common part of the calculation of the KF and EKF
    * @param y The result of the z_measured - z_predicted
+   * @param R_in The measurement covariance matrix
+   * @param H_in The measurement matrix
    */
-  void Update(const Eigen::VectorXd &y, const Eigen::MatrixXd &H_, const Eigen::MatrixXd &R_);
+  void UpdateCommon(const Eigen::VectorXd &y, const Eigen::MatrixXd &R_in,
+                    const Eigen::MatrixXd &H_in);
 
   /**
    * Normalizes the given angle in [-π, π)

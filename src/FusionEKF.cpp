@@ -45,8 +45,8 @@ FusionEKF::FusionEKF() {
 
   P_ << 1, 0, 0, 0,
     0, 1, 0, 0,
-    0, 0, 10, 0,
-    0, 0, 0, 10;
+    0, 0, 1000, 0,
+    0, 0, 0, 1000;
 
 }
 
@@ -101,7 +101,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     // set the state with the initial location and zero velocity
     x_ << px, py, vx, vy;
 
-    ekf_.Init(x_, P_);
+    ekf_.Init(x_, P_, F_, Q_, H_laser_);
 
 
     // save the initial timestamp to calculate dt for the next step.
@@ -122,22 +122,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     double dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
     previous_timestamp_ = measurement_pack.timestamp_;
 
-    double dt_2 = dt * dt;
-    double dt_3 = dt_2 * dt;
-    double dt_4 = dt_3 * dt;
-
-    // Update the values of the state transition matrix based on
-    // the new elapset time
-    F_(0, 2) = dt;
-    F_(1, 3) = dt;
-
-    // Update the process covariance matrix
-    Q_ << (dt_4*noise_ax_) / 4, 0, (dt_3*noise_ax_) / 2, 0,
-      0, (dt_4*noise_ay_) / 4, 0, (dt_3*noise_ay_) / 2,
-      (dt_3*noise_ax_) / 2, 0, dt_2*noise_ax_, 0,
-      0, (dt_3*noise_ay_) / 2, 0, dt_2*noise_ay_;
-
-    ekf_.Predict(F_, Q_);
+    ekf_.Predict(dt, noise_ax_, noise_ay_);
 
     /*****************************************************************************
      *  Update
@@ -149,12 +134,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       Hj_ = tools.CalculateJacobian(ekf_.GetStateVec());
 
       // Radar updates
-      ekf_.UpdateEKF(measurement_pack.raw_measurements_, Hj_, R_radar_);
+      ekf_.Update(measurement_pack.raw_measurements_, R_radar_, Hj_);
 
     } else {
 
       // Laser updates
-      ekf_.UpdateKF(measurement_pack.raw_measurements_, H_laser_, R_laser_);
+      ekf_.Update(measurement_pack.raw_measurements_, R_laser_);
     }
 
     // print the output

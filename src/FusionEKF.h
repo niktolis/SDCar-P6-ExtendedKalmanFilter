@@ -32,7 +32,8 @@ public:
   KalmanFilter ekf_;
 
 private:
-  // check whether the tracking toolbox was initialized or not (first measurement)
+  // check whether the tracking toolbox was initialized 
+  // or not (first measurement)
   bool is_initialized_;
 
   // previous timestamp
