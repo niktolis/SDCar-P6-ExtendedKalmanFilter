@@ -36,9 +36,13 @@ int main() {
   vector<VectorXd> estimations;
   vector<VectorXd> ground_truth;
 #ifdef WIN_UWS_LIB
-  h.onMessage([&fusionEKF, &tools, &estimations, &ground_truth](uWS::WebSocket<uWS::SERVER>* ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&fusionEKF, &tools, &estimations, &ground_truth](
+    uWS::WebSocket<uWS::SERVER>* ws, char *data, size_t length, 
+    uWS::OpCode opCode) {
 #else
-  h.onMessage([&fusionEKF, &tools, &estimations, &ground_truth](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&fusionEKF, &tools, &estimations, &ground_truth](
+    uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
+    uWS::OpCode opCode) {
 #endif
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -146,8 +150,11 @@ int main() {
       } else {
 
         std::string msg = "42[\"manual\",{}]";
-        //~ ws->send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+#ifdef WIN_UWS_LIB
+        ws->send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+#else
         ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+#endif
       }
     }
 
@@ -155,7 +162,8 @@ int main() {
 
   // We don't need this since we're not using HTTP but if it's removed the program
   // doesn't compile :-(
-  h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t, size_t) {
+  h.onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, 
+                  size_t, size_t) {
     const std::string s = "<h1>Hello world!</h1>";
     if(req.getUrl().valueLength == 1) {
 
@@ -178,11 +186,14 @@ int main() {
 
 
 #ifdef WIN_UWS_LIB
-  h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER>* ws, int code, char *message, size_t length) {
+  h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER>* ws, int code, 
+                    char *message, size_t length) {
+    ws->close();
 #else
-  h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> ws, int code, char *message, size_t length) {
-#endif
+  h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> ws, int code, 
+                    char *message, size_t length) {
     ws.close();
+#endif
     std::cout << "Disconnected" << std::endl;
   });
 
