@@ -59,7 +59,7 @@ OUTPUT: values provided by the c++ program to the simulator
 ### Visual Studio on Windows
 
 1. Clone this repo.
-2. Use [this](https://github.com/fkeidel/CarND-Term2-ide-profile-VisualStudio) instructions to install the necessary dependencies for Visual Studio.
+2. Use [this](https://github.com/fkeidel/CarND-Term2-ide-profile-VisualStudio) repo to install the necessary dependencies for Visual Studio.
    Do not copy the `main.cpp` file and don't perform any changes on the `CMakeLists.txt` file as they are already modified to facilitate compilation on both VS and GNU environment.
 3. Open the solution generated inside `./products` folder on your Visual Studio Environment.
 
