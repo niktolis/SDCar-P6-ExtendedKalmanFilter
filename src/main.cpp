@@ -35,8 +35,11 @@ int main() {
   Tools tools;
   vector<VectorXd> estimations;
   vector<VectorXd> ground_truth;
-
+#ifdef WIN_UWS_LIB
   h.onMessage([&fusionEKF, &tools, &estimations, &ground_truth](uWS::WebSocket<uWS::SERVER>* ws, char *data, size_t length, uWS::OpCode opCode) {
+#else
+  h.onMessage([&fusionEKF, &tools, &estimations, &ground_truth](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+#endif
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -132,14 +135,19 @@ int main() {
           msgJson["rmse_vy"] = RMSE(3);
           auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
           //std::cout << msg << std::endl;
+#ifdef WIN_UWS_LIB
           ws->send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+#else
+          ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+#endif
 
         }
 
       } else {
 
         std::string msg = "42[\"manual\",{}]";
-        ws->send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+        //~ ws->send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+        ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
       }
     }
 
@@ -160,12 +168,21 @@ int main() {
     }
   });
 
+#ifdef WIN_UWS_LIB
   h.onConnection([&h](uWS::WebSocket<uWS::SERVER>* ws, uWS::HttpRequest req) {
+#else
+  h.onConnection([&h](uWS::WebSocket<uWS::SERVER> ws, uWS::HttpRequest req) {
+#endif
     std::cout << "Connected!!!" << std::endl;
   });
 
+
+#ifdef WIN_UWS_LIB
   h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER>* ws, int code, char *message, size_t length) {
-    ws->close();
+#else
+  h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> ws, int code, char *message, size_t length) {
+#endif
+    ws.close();
     std::cout << "Disconnected" << std::endl;
   });
 

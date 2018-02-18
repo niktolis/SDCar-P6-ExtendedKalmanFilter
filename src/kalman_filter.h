@@ -47,7 +47,7 @@ public:
    * Getter function for the state covariance
    * @return the state covariance matrix P_
    */
-  Eigen::MatrixXd KalmanFilter::GetStateCovMat();
+  Eigen::MatrixXd GetStateCovMat();
 
   /**
    * Setter function for the state vector

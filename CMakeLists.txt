@@ -9,6 +9,8 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
 
+
+
 set(sources 
     ./src/main.cpp 
     ./src/tools.cpp
@@ -33,6 +35,7 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 add_executable(ExtendedKF ${sources})
 
 if(MSVC)
+add_definitions(-DWIN_UWS_LIB)
 set(CMAKE_TOOLCHAIN_FILE "c:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake")
 else(MSVC)
 target_link_libraries(ExtendedKF z ssl uv uWS)
