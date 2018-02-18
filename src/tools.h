@@ -30,7 +30,7 @@ public:
   MatrixXd CalculateJacobian(const VectorXd& x_state);
 
 private:
-	VectorXd product_sum_;
+  VectorXd product_sum_;
 
 };
 

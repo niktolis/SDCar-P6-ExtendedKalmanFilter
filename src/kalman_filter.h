@@ -3,24 +3,9 @@
 #include "Eigen/Dense"
 
 class KalmanFilter {
-private:
-
-  // state vector
-  Eigen::VectorXd x_;
-
-  // state covariance matrix
-  Eigen::MatrixXd P_;
-
-  // state transition matrix
-  Eigen::MatrixXd F_;
-
-  // process covariance matrix
-  Eigen::MatrixXd Q_;
-
-  // measurement matrix
-  Eigen::MatrixXd H_;
 
 public:
+
   /**
    * Constructor
    */
@@ -39,8 +24,8 @@ public:
    * @param Q_in Initial process covariance matrix
    * @param H_in Initial measurement matrix
    */
-  void Init(Eigen::VectorXd &x_in, Eigen::MatrixXd &P_in, 
-            Eigen::MatrixXd &F_in, Eigen::MatrixXd &Q_in, 
+  void Init(Eigen::VectorXd &x_in, Eigen::MatrixXd &P_in,
+            Eigen::MatrixXd &F_in, Eigen::MatrixXd &Q_in,
             Eigen::MatrixXd &H_in);
 
   /**
@@ -60,7 +45,6 @@ public:
   * @return the state vector x_
   */
   Eigen::VectorXd GetStateVec();
-
 
   /**
    * Prediction Predicts the state and the state covariance
@@ -85,7 +69,7 @@ public:
    * @param Hj_in The Jacobian measurement matrix
    */
   void Update(const Eigen::VectorXd &z, const Eigen::MatrixXd &R_in,
-                 const Eigen::MatrixXd &Hj_in);
+              const Eigen::MatrixXd &Hj_in);
 
 private:
 
@@ -104,6 +88,21 @@ private:
    * @return the normalized angle in radians phi
    */
   double NormalizeAngle(double phi);
+
+  // state vector
+  Eigen::VectorXd x_;
+
+  // state covariance matrix
+  Eigen::MatrixXd P_;
+
+  // state transition matrix
+  Eigen::MatrixXd F_;
+
+  // process covariance matrix
+  Eigen::MatrixXd Q_;
+
+  // measurement matrix
+  Eigen::MatrixXd H_;
 
 };
 
